@@ -1,0 +1,524 @@
+/****************************************** Fonts ******************************************/
+@font-face {
+    font-family: 'BogartAlt';
+    src: url('fonts/BOGARTALTMEDIUMTRIAL.TTF') format('truetype'),
+        url('fonts/BOGARTALTMEDIUMTRIAL.TTF') format('woff');
+    font-weight: medium;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Satoshi';
+    src: url('fonts/Satoshi-Regular.otf') format('opentype'),
+        url('fonts/Satoshi-Regular.otf') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Satoshi';
+    src: url('fonts/Satoshi-Bold.otf') format('opentype'),
+        url('fonts/Satoshi-Bold.otf') format('woff');
+    font-weight: bold;
+    font-style: normal;
+}
+
+/****************************************** Layering ******************************************/
+/*  1 = map
+    2 = layer
+    3 = info button
+    4 = image
+    5 = story (text) 
+     */
+
+#map {
+    top: 0;
+    height: 100vh;
+    width: 100vw;
+    position: fixed;
+    z-index: 1;
+}
+
+#layerLegend {
+    z-index: 2; 
+}
+
+#infoBtn {
+  position: fixed;
+  top: 20px;
+  left: 32px;
+  z-index: 1100; /* should be above all overlay images */
+}
+
+#layerLegend {
+  z-index: 1100; /* same idea */
+}
+
+#image-overlay-container {
+    z-index: 4; 
+}
+
+#story {
+    position: relative;
+    z-index: 5; 
+}
+
+/***********************************************************************************************/
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: sans-serif;
+}
+
+a,
+a:hover,
+a:visited {
+    color: #0071bc;
+}
+
+/****************************************** Header ******************************************/
+
+#header {
+    margin: auto;
+    width: 100%;
+    position: relative;
+    z-index: 5;
+}
+
+#header h1,
+#header h2,
+#header p {
+    margin: 0;
+    padding: 2vh 2vw;
+    text-align: center;
+}
+
+#logo-link {
+    position: fixed;       /* stays in place while scrolling */
+    top: 20px;             /* distance from top */
+    left: 50%;             /* start at horizontal center */
+    transform: translateX(-50%); /* center it exactly */
+    z-index: 500;         /* above map and other elements */
+    text-align: center;
+}
+
+#logo {
+    height: 24px;          /* adjust size as needed */
+    width: auto;           /* maintain aspect ratio */
+    cursor: pointer;       /* pointer on hover */
+    transition: transform 0.3s ease;
+}
+
+/* Optional hover effect */
+#logo:hover {
+    transform: scale(1.05);
+}
+
+/****************************************** Textbox ******************************************/
+
+.chapter-content {
+    background-color: #FBF8F0;
+    margin-top: auto;
+    margin-bottom: auto;
+    width: 100%;
+    padding: 25px 50px;
+    border-radius: 10px;
+    position: relative;
+}
+
+/* Small centered image at top of textbox */
+.chapter-top-image {
+    position: absolute;
+    top: 0;
+    left: 50%;
+
+    transform: translate(-50%, -80%);
+
+    width: 250px;   /* adjust size */
+    height: auto;
+
+    z-index: 10;
+
+    pointer-events: none;
+}
+
+.chapter-content .chapter-icon {
+    width: 60px;
+    height: auto;
+    max-width: 60px;
+    display: block;
+    margin-top: 10px;
+}
+
+.chapter-content .image-bottomleft{
+    width: 30%;
+    height: auto;
+    max-width: 100%;
+
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    transform: translate(-25%, 50%);
+}
+
+.chapter-content .image-bottomright{
+    width: 25%;
+    height: auto;
+    max-width: 100%;
+
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    transform: translate(35%, 40%);
+}
+
+.chapter-content .image-topright{
+    width: 20%;
+    height: auto;
+    max-width: 100%;
+
+    position: absolute;
+    right: 0;
+    top: 0;
+    transform: translate(40%, -50%);
+}
+
+h3 {
+    font-size: 32px;
+    font-family: 'BogartAlt', serif;
+    line-height: 100%;
+}
+
+p {
+    font-size: 20px;
+    font-family: 'Satoshi', sans-serif;
+    line-height: normal;
+}
+
+.caption {
+    font-size: 16px;
+    color:  #4D4D4D;
+    font-family: 'Satoshi', sans-serif;
+    line-height: normal;
+}
+
+/****************************************** Footer ******************************************/
+
+
+#footer {
+    width: 100%;
+    min-height: 5vh;
+    padding-top: 2vh;
+    padding-bottom: 2vh;
+    text-align: center;
+    line-height: 25px;
+    font-size: 13px;
+    position: relative;
+    z-index: 5;
+}
+
+/****************************************** Features ******************************************/
+
+
+#features {
+    padding-top: 10vh;
+    padding-bottom: 10vh;
+}
+
+/****************************************** Image ******************************************/
+
+#image-overlay-container {
+  position: fixed;      /* <-- key change */
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none; /* prevents blocking scroll */
+}
+
+.overlay-image {
+    opacity: 0;
+    transition: opacity 0.8s ease;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+    background: black;
+
+    z-index: 1;
+}
+
+#year {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -200%);
+  
+  font-family: 'BogartAlt', serif;
+  font-size: 10rem;
+  font-weight: 900;
+  color: white;
+  border-color: black;
+  border-radius: 20px;
+
+  text-shadow: 0 10px 30px rgba(0,0,0,0.5);
+
+  opacity: 0;
+  transition: opacity 1s ease;
+
+  pointer-events: none;
+}
+/****************************************** Markers ******************************************/
+
+.numbered-marker {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+
+    background: #363636;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    line-height: normal;
+
+    cursor: pointer;
+    border: 2px solid white;
+}
+
+
+.numbered-marker:hover {
+    transform: scale(1.1);
+}
+
+/****************************************** Postcard ******************************************/
+
+#postcard {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: 320px;
+
+  transform: translate(-50%, -50%) translateX(-120vw);
+
+  opacity: 0;
+  pointer-events: none;
+  z-index: 10;
+
+  will-change: transform;
+}
+
+#postcard img {
+  width: 300%;
+  transform: rotate(-4deg);
+  filter: drop-shadow(0 15px 25px rgba(0,0,0,0.25));
+}
+
+/****************************************** Caption ******************************************/
+
+#caption-container {
+    position: fixed;   /* NOT absolute */
+    inset: 0;
+    z-index: 9999;
+    pointer-events: none;
+}
+
+#caption {
+    position: absolute;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    transform-origin: center;
+}
+
+
+/****************************************** Info Overlay & Button ******************************************/
+
+.infoOverlay {
+    position: fixed;
+    top: 0px;
+    right: 0px;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.6);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1100;
+}
+
+.infoContent {
+    background: #FBF8F0;
+    padding: 2em;
+    border-radius: 12px;
+    max-width: 30%;
+    width: 90%;
+    max-height: 75vh;   /* limit height to 80% of viewport */
+    overflow-y: auto;   /* enable scrolling if content is too tall */
+    text-align: left;
+    position: relative;
+}
+
+.infoContent h2 {
+    font-family: 'BogartAlt', serif;
+}
+
+#infoBtn {
+    position: fixed;       /* Keeps it in the same place on screen */
+    top: 20px;             /* Distance from the top */
+    left: 32px;           /* Distance from the right */
+    background: transparent;
+    border: none;
+    font-size: 1.5em;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#infoBtn img {
+    height: 32px;
+    width: auto;
+}
+
+.closeBtn {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: transparent;
+    border: none;
+    font-size: 2em;              /* bigger "×" */
+    line-height: 1;
+    cursor: pointer;
+    width: 44px;                 /* min recommended touch target */
+    height: 44px;                /* min recommended touch target */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;          /* optional: circular hit area */
+}
+
+
+/****************************************** Legend ******************************************/
+
+#layerLegend {
+    position: fixed;
+    top: 24px;
+    right: 24px;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 12px 14px;
+    border-radius: 8px;
+    font-family: sans-serif;
+}
+
+.layer-toggle {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    margin-bottom: 8px;
+    /* user-select: none; */
+    padding: 4px 6px; /* optional: clickable area */
+    border-radius: 6px;
+    transition: background 0.2s;
+}
+
+.layer-toggle .color-box {
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+    margin-right: 8px;
+    transition: opacity 0.2s;
+}
+
+.layer-toggle.active {
+    background: rgba(0,0,0,0.05); /* subtle highlight */
+}
+
+.layer-toggle:not(.active) .color-box {
+    opacity: 0.4; /* faded when inactive */
+}
+
+
+.layer-toggle .layer-label {
+    font-family: 'Satoshi', sans-serif;
+    font-size: 14px;
+}
+
+.layer-toggle:last-child {
+    margin-bottom: 0;
+}
+
+/****************************************** Classes ******************************************/
+
+.hidden {
+    visibility: hidden;
+}
+
+.centered {
+    width: 50vw;
+    margin: 0 auto;
+}
+
+.lefty {
+    width: 40vw;
+    margin-left: 5vw;
+}
+
+.righty {
+    width: 33vw;
+    margin-left: 62vw;
+}
+
+.fully {
+    width: 100%;
+    margin: auto;
+}
+
+.light {
+    color: #444;
+    background-color: #fafafa;
+}
+
+.dark {
+    color: #fafafa;
+    background-color: #444;
+}
+
+.step {
+    min-height: 100vh;
+    display: flex;
+}
+
+.step.active {
+    opacity: 1;
+}
+
+
+.chapter-content img:not(.chapter-top-image) {
+    width: 100%;
+}
+
+/****************************************** Responsive Design ******************************************/
+
+@media (max-width: 750px) {
+    .centered,
+    .lefty,
+    .righty,
+    .fully {
+        width: 90vw;
+        margin: 0 auto;
+    }
+}
+
+/* Fix issue on mobile browser where scroll breaks  */
+.mapboxgl-canvas-container.mapboxgl-touch-zoom-rotate.mapboxgl-touch-drag-pan,
+.mapboxgl-canvas-container.mapboxgl-touch-zoom-rotate.mapboxgl-touch-drag-pan .mapboxgl-canvas {
+    touch-action: unset;
+}

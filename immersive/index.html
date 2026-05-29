@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset='utf-8' />
+    <title>Adapting Waterfronts SF - Immersive</title>
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+    <link rel="icon" type="image/x-icon" href="./assets/AW_Favicon.png">
+    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v3.8.0/mapbox-gl.js'></script>
+    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v3.8.0/mapbox-gl.css' rel='stylesheet' />
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/mapbox-gl-globe-minimap@1.2.0/dist/bundle.js"></script>
+    <script src="https://unpkg.com/scrollama"></script>
+</head>
+
+<body>
+    <!------------------------------------------ HTML  ----------------------------------------------------------->
+
+      <a href="https://adaptingwaterfronts.com/" target="_blank" id="logo-link">
+      <img src="./assets/AW_Logo_Words.png" alt="Logo" id="logo">
+  </a>
+
+    <!-- Map -->
+    <div id="map"></div>
+
+    <!-- Image  -->
+  <div id="image-overlay-container">
+    <img id="image-present" alt="Present-Day Image" class="overlay-image" src="" style="opacity:0; z-index:1;">
+    <img id="image-past" alt="Past Image" class="overlay-image" src="" style="opacity:0; z-index:2;">
+    <img id="image-past2" alt="Past Image 2"class="overlay-image" src="" style="opacity:0; z-index:3;">
+    <img id="image-future" alt="Future Image" class="overlay-image" src="" style="opacity:0; z-index:4;">
+    <p id="year" style="z-index:4"></p>
+  </div>
+
+    <!-- Text -->
+    <div id="story"></div>
+
+    <!-- Postcard --> 
+    <div id="postcard" class="postcard">
+      <img id="postcard-image" src="" alt="Postcard image">
+    </div>
+
+    <!-- Caption -->
+    <div id="caption-container">
+        <img id="caption" src="" alt="caption asset">
+    </div>
+
+    <!-- Legend -->
+    <div id="layerLegend">
+      <div class="layer-toggle active" data-layer="shoreline">
+        <span class="color-box" style="background-color: #7ac2ff;"></span>
+        <span class="layer-label">Historic Shoreline</span>
+      </div>
+      <!-- <div class="layer-toggle active" data-layer="6ftslr">
+        <span class="color-box" style="background-color: #41A7FF;"></span>
+        <span class="layer-label">6' Sea Level Rise</span>
+      </div> -->
+    </div>
+
+    <!-- Info Button -->
+    <button id="infoBtn"><img src="./assets/Info_Icon.png" alt="Info"></button>
+
+      <!-- Combined Info Overlay -->
+    <div id="infoOverlay" class="infoOverlay">
+      <div class="infoContent">
+        <button class="closeBtn">&times;</button>
+        <h2>About</h2>
+        <p>Adapting Waterfronts is a self-guided augmented reality tour along San Francisco’s historic downtown. The project invites the public to explore the past, present, and potential future transformations of the city’s shoreline as it adapts to climate change by visualizing installations at 8 designated locations. Supported by funds from the Research, Scholarly and Creative Activities (RCSA) Grant Program at the California Polytechnic State University in San Luis Obispo.</p>
+        <p>Created by Gabriel Tenaya Kaprielian</p>
+        <p>Web & Graphic Design by Abigail Chen</p>
+        <!-- <div class="about-logos">
+          <img src="img/CalPoly_Logo.png" alt="Cal Poly Logo">
+          <img src="img/SPUR_Logo.png" alt="SPUR Logo">
+          <img src="img/PortofSF_Logo.png" alt="Port of SF Logo">
+        </div> -->
+        <br>
+
+        <h2>Historic Images</h2>
+        <p>Site 1 - Mission Street (1917) - Horace Chaffee. San Francisco Department of Public Works. Courtesy of a Private Collector. OpenSFHistory / wnp36.01691. <a href='https://opensfhistory.org/Display/wnp36.01691.jpg'>https://opensfhistory.org/Display/wnp36.01691.jpg</a></p>
+        <p>Site 2 - 1st Street (1914) - Horace Chaffee. San Francisco Department of Public Works. Courtesy of a Private Collector. OpenSFHistory / wnp36.00474. <a href='https://opensfhistory.org/Display/wnp36.00474.jpg'>https://opensfhistory.org/Display/wnp36.00474.jpg</a></p>
+        <p>Site 3 - Market Street (1903) - Courtesy of a Private Collector. OpenSFHistory / wnp27.0263. <a href='https://opensfhistory.org/Display/wnp27.0263.jpg'>https://opensfhistory.org/Display/wnp27.0263.jpg</a></p>
+        <p>Site 4 - Battery Street (1916) - Horace Chaffee. San Francisco Department of Public Works. Courtesy of a Private Collector. OpenSFHistory / wnp36.01311. <a href='https://opensfhistory.org/Display/wnp36.01311.jpg'>https://opensfhistory.org/Display/wnp36.01311.jpg</a></p>
+        <p>Site 5 - Pine Street (1866) - Lawrence & Houseworth. Martin Behrman Negative Collection. Courtesy of Golden Gate National Recreation Area, Park Archives. OpenSFHistory / wnp71.1981. <a href='https://opensfhistory.org/Display/wnp71.1981.jpg'>https://opensfhistory.org/Display/wnp71.1981.jpg</a></p>
+        <p>Site 6 - Montgomery Street (1907) - Helen Sjoberg Collection. Courtesy of Vicky Walker, Bernal History Project. OpenSFHistory / wnp102.0052. <a href='https://opensfhistory.org/Display/wnp102.0052.jpg'>https://opensfhistory.org/Display/wnp102.0052.jpg</a></p>
+        <p>Site 7 - Davis Street (1921) - Horace Chaffee. San Francisco Department of Public Works. Courtesy of a Private Collector. OpenSFHistory / wnp36.02596. <a href='https://opensfhistory.org/Display/wnp36.02596.jpg'>https://opensfhistory.org/Display/wnp36.02596.jpg</a></p>
+        <p>Site 8 - Market Street (1960) - Courtesy of a Private Collector. OpenSFHistory / wnp27.5217. <a href='https://opensfhistory.org/Display/wnp27.5217.jpg'>https://opensfhistory.org/Display/wnp27.5217.jpg</a></p><br>
+
+        <h2>Data Sources</h2>
+        <p>The <a href="https://www.coast.noaa.gov/slr">sea level rise data</a> was created by the National Oceanic and Atmospheric Administration (NOAA) Office for Coastal Management. </p>
+        <p>The historic shoreline data was sourced from UC Berkeley Library, “GIS (Geospatial Information Systems): California & Bay Area GIS Data.”</p>
+        <p>All data is licensed under the <a href="https://creativecommons.org/licenses/by-nc/4.0/">Creative Commons Attribution-Noncommercial 4.0 License.</a></p><br>
+       
+        <h2>Disclaimer</h2>
+        <p>The content contained in this website are speculative fictions. Their intended purpose is to inspire the imagination by considering different scenarios and strategies for climate change adaptation. The images are artistic renderings and do not explicitly reflect the scientific findings or stance of any of the partner organizations.</p>
+      </div>
+    </div>
+
+    
+    <!------------------------------------------ JS  ----------------------------------------------------------->
+
+    <script src="./config.js"></script>
+    <script src="./script.js"></script> 
+
+</body>
+</html>

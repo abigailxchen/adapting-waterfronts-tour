@@ -1,0 +1,804 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Adapting Waterfronts SF - AR</title>
+    <!-- <base href="https://abigailxchen.github.io/adapting-waterfronts-tour/"> -->
+    <link rel="icon" type="image/png" href="img/AW_Favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      href="https://fonts.googleapis.com/css?family=Open+Sans"
+      rel="stylesheet"
+    />
+    <script src="https://api.mapbox.com/mapbox-gl-js/v3.14.0/mapbox-gl.js"></script>
+    <link
+      href="https://api.mapbox.com/mapbox-gl-js/v3.14.0/mapbox-gl.css"
+      rel="stylesheet"
+    />
+
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Open Sans', sans-serif;
+      }
+
+      /* Fonts */
+      @font-face {
+        font-family: 'BogartAlt';
+        src: url('fonts/BOGARTALTMEDIUMTRIAL.TTF') format('truetype'),
+            url('fonts/BOGARTALTMEDIUMTRIAL.TTF') format('woff');
+        font-weight: medium;
+        font-style: normal;
+      }
+
+      @font-face {
+        font-family: 'Satoshi';
+        src: url('fonts/Satoshi-Regular.otf') format('opentype'),
+            url('fonts/Satoshi-Regular.otf') format('woff');
+        font-weight: normal;
+        font-style: normal;
+      }
+
+      @font-face {
+        font-family: 'Satoshi';
+        src: url('fonts/Satoshi-Bold.otf') format('opentype'),
+            url('fonts/Satoshi-Bold.otf') format('woff');
+        font-weight: bold;
+        font-style: normal;
+      }
+
+      /* Modal header */
+      #introModal h1 {
+        font-family: 'BogartAlt', serif; /* your custom font */
+        font-size: 1.8em;
+        line-height: 1.3; /* increase this if lines are too tight */
+        margin-bottom: 1em;
+      }
+
+      /* Map popups header */
+      .mapboxgl-popup-content h3 {
+        font-size: 22px;
+        font-family: 'BogartAlt', serif;
+      }
+
+      /* Info overlay headers */
+      .infoContent h2 {
+        font-family: 'BogartAlt', serif;
+      }
+
+      /* Paragraph text (modal, popup, info) */
+      #introModal p,
+      .mapboxgl-popup-content p,
+      .infoContent p,
+      .intro-steps
+      {
+        font-family: 'Satoshi', sans-serif;
+      }
+
+      /* Start button text */
+      #startBtn {
+        font-family: 'Satoshi', sans-serif;
+        font-weight: bold;  /* will use Satoshi-Bold.otf */
+      }
+
+      /* Modal background overlay */
+      #introOverlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.4);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1100; /* increased above topNav */
+      }
+
+      /* Modal content box */
+      #introModal {
+        background: #FBF8F0;
+        padding: 2em;
+        border-radius: 12px;
+        max-width: 400px;
+        width: 80%;
+        text-align: center;
+      }
+
+
+      #introModal h1 {
+        font-size: 1.8em;
+        margin-bottom: 1em;
+      }
+
+      #introModal p {
+        margin-bottom: 1.5em;
+        line-height: 1.4;
+      }
+
+      #introModal ol.intro-steps {
+        text-align: left;
+        margin: 1em auto;
+        padding-left: 0;
+        display: inline-block;
+        list-style: none;   /* hides the numbers */
+        line-height: 1.5;
+      }
+
+
+      #startBtn {
+        padding: 16px 60px;
+        font-size: 1.1em;
+        border: none;
+        border-radius: 8px;
+        background: #FFC31E;
+        color: black;
+        cursor: pointer;
+      }
+
+      #startBtn:hover {
+        background: #F7D987;
+      }
+
+      /* Map */
+      #map {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 100%;
+      }
+
+        .marker {
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        background: #363636;
+        color: white;
+        font-size: 16px;
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        border: 2px solid white;
+        /* box-shadow: 0 0 5px rgba(0,0,0,0.3); */
+        }
+
+      .mapboxgl-popup {
+        max-width: 400px;
+        z-index: 1006;
+      }
+
+      /* Popup container */
+      .mapboxgl-popup-content {
+        background-color: #FBF8F0; /* beige */
+        border-radius: 16px;       /* more rounded corners */
+        padding: 12px 16px;        /* adjust padding if you like */
+        font-family: sans-serif;   /* optional: match your site font */
+        font-size: 14px;
+        color: #333;               /* darker text for contrast */
+      }
+
+      /* Optional: popup tip (the little pointer triangle) */
+      .mapboxgl-popup-tip {
+        border-top-color: #FBF8F0 !important; /* beige pointer */
+      }
+
+
+      .mapboxgl-popup-close-button {
+        font-size: 2em !important;   /* larger × */
+        width: 44px !important;      /* bigger tap target */
+        height: 44px !important;
+        line-height: 44px !important;
+        border-radius: 50%;
+      }
+      .mapboxgl-popup-close-button:hover,
+      .mapboxgl-popup-close-button:focus {
+        background: rgba(0,0,0,0.05);
+      }
+
+      #layerLegend {
+        position: absolute;
+        top: 70px;  /* sits below top nav (60px) */
+        right: 15px;
+        background: white;
+        padding: 10px;
+        border-radius: 8px;
+        z-index: 1002;
+        font-family: 'Satoshi', sans-serif;
+    }
+
+      /* Info overlays */
+      .infoOverlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.6);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 1100;
+      }
+
+        .infoContent {
+          background: #FBF8F0;
+          padding: 2em;
+          border-radius: 12px;
+          max-width: 400px;
+          width: 90%;
+          max-height: 75vh;   /* limit height to 80% of viewport */
+          overflow-y: auto;   /* enable scrolling if content is too tall */
+          text-align: left;
+          position: relative;
+        }
+
+      .about-logos {
+        display: flex;
+        justify-content: center; /* centers logos in a row */
+        align-items: center; /* aligns them vertically */
+        gap: 20px; /* space between logos */
+        margin-top: 1em;
+        flex-wrap: wrap; /* allows wrapping on very small screens */
+      }
+
+      .about-logos img {
+        max-height: 60px; /* control logo size */
+        width: auto;
+        object-fit: contain;
+      }
+
+      .closeBtn {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        background: transparent;
+        border: none;
+        font-size: 2em;              /* bigger "×" */
+        line-height: 1;
+        cursor: pointer;
+        width: 44px;                 /* min recommended touch target */
+        height: 44px;                /* min recommended touch target */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;          /* optional: circular hit area */
+      }
+      
+      /* Remove hover effect completely */
+      .mapboxgl-popup-close-button,
+      .mapboxgl-popup-close-button:hover,
+      .mapboxgl-popup-close-button:focus,
+      .mapboxgl-popup-close-button:active {
+          background: transparent !important;  /* no hover color */
+      }
+
+      /* Top Navigation Bar */
+      #topNav {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 60px;
+        background: rgba(255,255,255);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1005;
+      } 
+
+      #logoImg {
+        height: 30px;   /* fits within 60px nav bar */
+        width: auto;
+        display: block;
+      }
+
+
+      #infoBtn {
+        position: absolute;
+        right: 15px;
+        background: transparent;
+        border: none;
+        font-size: 1.5em;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      #infoBtn img {
+      height: 24px;
+      width: auto;
+    }
+
+
+      .qr-section {
+        text-align: center;   /* centers instructions */
+        margin-top: 12px;     /* spacing above the section */
+      }
+
+      .qr-section p {
+        margin-bottom: 8px;   /* space between text and QR image */
+      }
+
+      .qr-code {
+        display: block;
+        margin: 0 auto;
+        max-width: 25%;     /* keep it a reasonable size */
+        height: auto;
+      }
+
+      /* Layer legend */
+      .layer-toggle {
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        margin-bottom: 8px;
+        user-select: none;
+        padding: 4px 6px; /* optional: clickable area */
+        border-radius: 6px;
+        transition: background 0.2s;
+      }
+
+      .layer-toggle .color-box {
+        width: 20px;
+        height: 20px;
+        border-radius: 4px;
+        margin-right: 8px;
+        transition: opacity 0.2s;
+      }
+
+      .layer-toggle.active {
+        background: rgba(0,0,0,0.05); /* subtle highlight */
+      }
+
+      .layer-toggle:not(.active) .color-box {
+        opacity: 0.4; /* faded when inactive */
+      }
+
+
+      .layer-toggle .layer-label {
+        font-family: 'Satoshi', sans-serif;
+        font-size: 14px;
+      }
+
+      .layer-toggle:last-child {
+        margin-bottom: 0;
+      }
+
+
+    </style>
+  </head>
+
+  <body>
+      <!-- Intro Modal -->
+      <div id="introOverlay" style="display:flex;">
+      <div id="introModal">
+          <h1>Welcome to the Adapting Waterfronts SF Tour!</h1>
+          <p>This is a self-guided tour of San Francisco’s adapting waterfront past, present, and future.</p>
+          <!-- <p> Here’s how to get started: </p>
+          <ol class="intro-steps">
+            <li><strong>Step 1.</strong> Download <a href="https://apps.apple.com/us/app/adobe-aero/id1401748913">Adobe Aero</a>. Sign in.</li>
+            <li><strong>Step 2.</strong> Click on map markers and hold the QR code to be redirected to the AR experience.</li>
+            <li><strong>Step 3.</strong> Follow the prompts on Aero to view installation.</li>
+            <li><strong>Step 4.</strong> Enjoy and be aware of your surroundings at all times.</li>
+          </ol><p></p> -->
+          <button id="startBtn">Start</button>
+      </div>
+      </div>
+
+    <!-- Top Navigation Bar -->
+    <div id="topNav">
+      <!-- <a href="https://www.adaptingwaterfronts.com/"> -->
+        <img src="img/AW_Logo_Words.png" alt="Adapting Waterfronts logo" id="logoImg" />
+      <!-- </a> -->
+      <button id="infoBtn"><img src="img/Info_Icon.png" alt="Info"></button>
+    </div>
+
+
+    <!-- Combined Info Overlay -->
+    <div id="infoOverlay" class="infoOverlay">
+      <div class="infoContent">
+        <button class="closeBtn">&times;</button>
+        <!-- <h2>Getting Started</h2>
+        <p><strong>Step 1.</strong> Download <a href="https://apps.apple.com/us/app/adobe-aero/id1401748913">Adobe Aero</a>. Sign in.</p>
+        <p><strong>Step 2.</strong> Click on the map markers, hold the QR code, and click “Open Adobe Aero” to be redirected to the AR experience.</p>
+        <p><strong>Step 3.</strong> Look in the direction of the present-day photo.</p>
+        <p><strong>Step 4.</strong> Once uploaded, tap on screen to anchor the AR installation on ground.</p>
+        <p><strong>Step 5.</strong> Enjoy and be aware of your surroundings at all times.</p><br> -->
+
+        <h2>About</h2>
+        <p>Adapting Waterfronts is a self-guided tour along San Francisco’s historic downtown. The project invites the public to explore the past, present, and potential future transformations of the city’s shoreline as it adapts to climate change by visualizing installations at 8 designated locations. Supported by funds from the Research, Scholarly and Creative Activities (RCSA) Grant Program at the California Polytechnic State University in San Luis Obispo.</p>
+        <p>Created by Gabriel Tenaya Kaprielian</p>
+        <p>Web & Graphic Design by Abigail Chen</p>
+        <!-- <div class="about-logos">
+          <img src="img/CalPoly_Logo.png" alt="Cal Poly Logo">
+          <img src="img/SPUR_Logo.png" alt="SPUR Logo">
+          <img src="img/PortofSF_Logo.png" alt="Port of SF Logo">
+        </div> -->
+        <br>
+
+        <h2>Historic Images</h2>
+        <p>Site 1 - Mission Street (1917): OpenSFHistory.org / wnp36.01691; DPW Horace Chaffee (SF Department of Public Works / Courtesy of a Private Collector)</p>
+        <p>Site 2 - 1st Street (1914): OpenSFHistory.org / wnp36.00474; DPW Horace Chaffee (SF Department of Public Works / Courtesy of a Private Collector)</p>
+        <p>Site 3 - Market Street (1903): OpenSFHistory.org / wnp27.0263; (Courtesy of a Private Collector)</p>
+        <p>Site 4 - Battery Street (1916): OpenSFHistory.org / wnp36.01311; DPW Horace Chaffee (SF Department of Public Works / Courtesy of a Private Collector)</p>
+        <p>Site 5 - Pine Street (1866): OpenSFHistory.org / wnp71.1981; Lawrence & Houseworth (Martin Behrman Negative Collection / Courtesy of the Golden Gate NRA, Park Archives)</p>
+        <p>Site 6 - Montgomery Street (1907): OpenSFHistory.org / wnp102.0052; (Helen Sjoberg Collection / Courtesy of Vicky Walker, Bernal History Project)</p>
+        <p>Site 7 - Davis Street (1921): OpenSFHistory.org / wnp36.02596; (DPW Horace Chaffee (SF Department of Public Works / Courtesy of a Private Collector))</p>
+        <p>Site 8 - Market Street (1960): OpenSFHistory.org / wpn27.5217; (Courtesy of a Private Collector)</p><br>
+
+        <h2>Data Sources</h2>
+        <p>The <a href="https://www.coast.noaa.gov/slr">sea level rise data</a> was created by the National Oceanic and Atmospheric Administration (NOAA) Office for Coastal Management. </p>
+        <p>The historic shoreline data was sourced from UC Berkeley Library, “GIS (Geospatial Information Systems): California & Bay Area GIS Data.”</p>
+        <p>All data is licensed under the <a href="https://creativecommons.org/licenses/by-nc/4.0/">Creative Commons Attribution-Noncommercial 4.0 License.</a></p><br>
+       
+        <h2>Disclaimer</h2>
+        <p>The content contained in this website are speculative fictions. Their intended purpose is to inspire the imagination by considering different scenarios and strategies for climate change adaptation. The images are artistic renderings and do not explicitly reflect the scientific findings or stance of any of the partner organizations.</p>
+      </div>
+    </div>
+
+
+    <!-- Map -->
+    <div id="map"></div>
+
+    <!-- Layer legend / toggle -->
+    <div id="layerLegend">
+      <div class="layer-toggle active" data-layer="shoreline">
+        <span class="color-box" style="background-color: #FFC31E;"></span>
+        <span class="layer-label">Historic Shoreline</span>
+      </div>
+      <div class="layer-toggle active" data-layer="6ftslr">
+        <span class="color-box" style="background-color: #41A7FF;"></span>
+        <span class="layer-label">6' Sea Level Rise</span>
+      </div>
+    </div>
+
+
+
+    <script>
+      // Custom access token for github website
+      mapboxgl.accessToken = 'pk.eyJ1IjoiZ3NjYWxlczEiLCJhIjoiY21mYnJoN3R1MTd0MTJscTJsbHBzYjRxMCJ9.cumfjtafRFRLWWKQOUkAfg';
+
+      // Create map
+        const map = new mapboxgl.Map({
+            container: 'map',
+            style: 'mapbox://styles/mapbox/light-v11',
+            center: [-122.39867, 37.79268],
+            zoom: 14.15
+        });
+
+        // Add geolocate
+        const geolocate = new mapboxgl.GeolocateControl({
+            positionOptions: {
+                enableHighAccuracy: true
+            },
+            trackUserLocation: true,
+            showUserHeading: true
+        });
+
+        map.addControl(geolocate);
+
+        // Intro modal logic
+        const introOverlay = document.getElementById("introOverlay");
+        const startBtn = document.getElementById("startBtn");
+
+        startBtn.addEventListener("click", () => {
+        introOverlay.style.display = "none"; // completely hide intro overlay
+        // Trigger geolocation
+        geolocate.trigger(); // will prompt the user to share location
+        });
+
+      // Top nav info button logic
+      const infoBtn = document.getElementById("infoBtn");
+      const infoOverlay = document.getElementById("infoOverlay");
+      const closeBtn = infoOverlay.querySelector(".closeBtn");
+
+      infoBtn.addEventListener("click", () => {
+        infoOverlay.style.display = "flex";
+      });
+
+      closeBtn.addEventListener("click", () => {
+        infoOverlay.style.display = "none";
+      });
+
+        // Load points
+        const geojson = {
+            type: 'FeatureCollection',
+            features: [
+                {
+                type: 'Feature',
+                geometry: {
+                    type: 'Point',
+                    coordinates: [-122.400652, 37.787491]
+                },
+                properties: {
+                    title: 'Mission & New Montgomery Street',
+                    description: "You’re standing on top of what was once a coastal sand dune prairie. Home to a diverse community of animals such as the northern harrier, brush rabbit, and coyote. Imagine if Mission Street was returned to pre-development ecology, replacing the concrete corridor with dune scrub and flowering plants including the Douglas Iris, baby blue eyes, and purple owl’s clover.",
+                    picture: '1_GIF.gif',
+                    //instructions: "Hold the QR and click 'Open Adobe Aero'!",
+                    // qr: '1_AR_QR.png'
+
+                }
+                },
+                {
+                type: 'Feature',
+                geometry: {
+                    type: 'Point',
+                    coordinates: [-122.397661, 37.789759]
+                },
+                properties: {
+                    title: 'Mission & 1st Street',
+                    description: 'You are standing on the edge of the historic shoreline of San Francisco! Can you imagine what it looked like at this beach before the city was built? With rising sea levels, the shoreline may return to its original location. A managed retreat is one adaptation strategy that removes parts of the city at risk of flooding. Are there parts of downtown that you wouldn’t want to see lost?',
+                    picture: '2_GIF.gif',
+                    // instructions: "Hold the QR and click 'Open Adobe Aero'!",
+                    // qr: '2_AR_QR.png'
+
+                }
+                },
+                {
+                type: 'Feature',
+                geometry: {
+                    type: 'Point',
+                    coordinates: [-122.399196, 37.791108]
+                },
+                properties: {
+                    title: 'Market & 1st Street',
+                    description: 'Canals can be used as part of a larger climate adaptation strategy for coastal cities. They can store excess water during heavy rainfall and relieve pressure on rising groundwater and saltwater intrusion caused by rising sea levels. Can you envision canals replacing some streets in San Francisco? What would be the benefits and drawbacks?',
+                    picture: '3_GIF.gif',
+                    // instructions: "Hold the QR and click 'Open Adobe Aero'!",
+                    // qr: '3_AR_QR.png'
+                }
+                },
+                {
+                type: 'Feature',
+                geometry: {
+                    type: 'Point',
+                    coordinates: [-122.399804, 37.792270]
+                },
+                properties: {
+                    title: 'Battery & Pine Street',
+                    description: "If you were standing here in the early 1800s you would be knee deep in water. Consider how San Francisco can co-exist with the Bay ecosystem. Accommodating rising sea levels within the existing city infrastructure is one adaptation strategy. Imagine streets replaced with tide pools. How many intertidal plants and animals can you name and where can you find them today?",
+                    picture: '4_GIF.gif',
+                    // instructions: "Hold the QR and click 'Open Adobe Aero'!",
+                    // qr: '4_AR_QR.png'
+                }
+                },
+                {
+                type: 'Feature',
+                geometry: {
+                    type: 'Point',
+                    coordinates: [-122.402612, 37.791938]
+                },
+                properties: {
+                    title: 'Pine & Montgomery Street',
+                    description: 'This was the location of a coast live oak woodland adapted to live by the ocean. Trees not only provide shade and shelter for many species but also play a significant role in climate mitigation and adaptation. They store carbon and can help reduce temperatures. Imagine walking in downtown San Francisco through a forest. How can that experience change your outlook on the day?',
+                    picture: '5_GIF.gif',
+                    // instructions: "Hold the QR and click 'Open Adobe Aero'!",
+                    // qr: '5_AR_QR.png'
+                }
+                },
+                {
+                type: 'Feature',
+                geometry: {
+                    type: 'Point',
+                    coordinates: [-122.403187, 37.794671]
+                },
+                properties: {
+                    title: 'Montgomery & Clay Street',
+                    description: 'Imagine a giant public pool in downtown San Francisco. Would you swim in it? The historic Fleishhacker Pool was once located at Ocean Beach and measured 1000’ long! A pool providing public recreation in the summer can also double as resilient stormwater infrastructure. It can retain rainwater during severe atmospheric river events to avoid compound flooding due to sea level rise.',
+                    picture: '6_GIF.gif',
+                    //  instructions: "Hold the QR and click 'Open Adobe Aero'!",
+                    // qr: '6_AR_QR.png'
+
+                }
+                },
+                {
+                type: 'Feature',
+                geometry: {
+                    type: 'Point',
+                    coordinates: [-122.397819, 37.794443]
+                },
+                properties: {
+                    title: 'Davis & Sacramento Street',
+                    description: 'As sea levels rise, the areas that have been built on reclaimed land are some of the most vulnerable to flooding. The Embarcadero Center, built on what used to be Yerba Buena Cove, contains raised walkways that could adapt to accommodate the rising Bay waters. How can we reconsider the concept of a static shoreline as a flexible shore area by embracing our relationship with the water?',
+                    picture: '7_GIF.gif',
+                    // instructions: "Hold the QR and click 'Open Adobe Aero'!",
+                    // qr: '7_AR_QR.png'     
+
+                }
+                },
+                {
+                type: 'Feature',
+                geometry: {
+                    type: 'Point',
+                    coordinates: [-122.395698, 37.793759]
+                },
+                properties: {
+                    title: 'Market & Spear Street',
+                    description: 'The Antarctic Ice Sheet extends nearly 5.4 million square miles with a mean thickness of 7,000 feet. If it all melted, global sea levels would rise over 190 feet. How many feet of sea level rise do you think would be too much for San Francisco to use walls as shoreline protection? What are designs that allow the Embarcadero seawall to be raised without separating the city from the Bay?',
+                    picture: '8_GIF.gif',
+                    // instructions: "Hold the QR and click 'Open Adobe Aero'!", 
+                    // qr: '8_AR_QR.png'
+
+                }
+                },
+                {
+                type: 'Feature',
+                geometry: {
+                  type: 'Point',
+                  coordinates: [-122.39344, 37.79547] // Ferry Building coordinates
+                },
+                properties: {
+                  title: 'Ferry Building',
+                  description: "Thank you for taking part in this walking tour! Join us for a happy hour and dinner at the Ferry Building to mingle and make friends :)",
+                  picture: 'FerryBuilding_Image.png',
+                  // instructions: "We would love to hear what you thought of this experience. Please fill out this feedback form to help us improve!",
+                  // qr: 'QR_Feedback.png',
+                  special: true  // flag to indicate this is a custom marker
+                }
+              }
+            ]
+            };
+
+        // Add markers to map
+        geojson.features.forEach((feature, index) => {
+          let el;
+
+          if (feature.properties.special) {
+              // Create a custom flag marker for special locations
+              el = document.createElement('div');
+              el.style.backgroundImage = 'url(img/FerryBuilding_Icon.png)';
+              el.style.width = '60px';
+              el.style.height = '60px';
+              el.style.backgroundSize = 'contain';
+              el.style.backgroundRepeat = 'no-repeat';
+              el.style.cursor = 'pointer';
+            } else {
+              // Default numbered marker
+              el = document.createElement('div');
+              el.className = 'marker';
+              el.textContent = index + 1; // number markers chronologically
+            }
+
+          // Create popup
+          const popup = new mapboxgl.Popup({ offset: 25, maxWidth: '316px', anchor: 'bottom' })
+            .setHTML(
+              `<h3>${feature.properties.title}</h3>
+              <p>${feature.properties.description}</p>
+              ${feature.properties.picture ? `<img src="img/${feature.properties.picture}" style="max-width:100%">` : ""}
+              ${feature.properties.instructions || feature.properties.qr ? `
+                  <div class="qr-section">
+                    ${feature.properties.instructions ? `<p>${feature.properties.instructions}</p>` : ""}
+                    ${feature.properties.qr ? `<img src="img/${feature.properties.qr}" alt="QR Code" class="qr-code">` : ""}
+                  </div>` : ""}`
+            );
+
+          // Make a marker and add to the map
+          const marker = new mapboxgl.Marker(el)
+            .setLngLat(feature.geometry.coordinates)
+            .setPopup(popup)
+            .addTo(map);
+
+          // When popup opens, recenter map so popup is visible and zoom if needed
+          popup.on('open', () => {
+            let targetZoom = map.getZoom();
+
+            // On small screens, zoom in a little for readability
+            if (window.innerWidth < 768 && targetZoom < 16) {
+              targetZoom = 16; // adjust this zoom level as you like
+            }
+
+            map.easeTo({
+              center: feature.geometry.coordinates,
+              offset: [0, 330], // shift popup upward so it's not cut off
+              zoom: targetZoom,
+              duration: 900
+            });
+          });
+        });
+
+        map.on('load', () => {
+          // Shoreline
+          map.addSource('shoreline', {
+            'type': 'vector',
+            'url': 'mapbox://gscales1.1koo04dg' // Replace with Tileset ID
+          });
+
+          map.addLayer({
+            'id': 'shoreline',
+            'type': 'fill',
+            'source': 'shoreline',
+            'source-layer': 'bayfill_KML', // Replace with Tileset Vector Layer name
+            'paint': {
+              'fill-color': '#FFC31E',
+              'fill-opacity': 0.4
+            }
+          });
+
+          // 6ft SLR
+          map.addSource('6ftslr', {
+            'type': 'vector',
+            'url': 'mapbox://gscales1.2fbkgkhm' // Replace with Tileset ID
+          });
+
+          map.addLayer({
+            'id': '6ftslr',
+            'type': 'fill',
+            'source': '6ftslr',
+            'source-layer': '6ft_SLR_KML', // Replace with Tileset Vector Layer name
+            'paint': {
+              'fill-color': '#41A7FF',
+              'fill-opacity': 0.7
+            }
+          });
+
+          // Route
+          map.addSource('route', {
+            'type': 'geojson',
+            'data': {
+              'type': 'Feature',
+              'properties': {},
+              'geometry': {
+                'type': 'LineString',
+                'coordinates': [
+                  [-122.400517,37.78745],
+                  [-122.397587,37.789784],
+                  [-122.399158,37.791027],
+                  [-122.399584,37.791348],
+                  [-122.399789,37.792266],
+                  [-122.402592,37.791905],
+                  [-122.403138,37.79468],
+                  [-122.398016,37.79534],
+                  [-122.397809,37.794438],
+                  [-122.396609,37.79459],
+                  [-122.396324,37.793286],
+                  [-122.395638, 37.793845]
+                ]
+              }
+            }
+          });
+
+          map.addLayer({
+            'id': 'route',
+            'type': 'line',
+            'source': 'route',
+            'layout': {
+              'line-join': 'round',
+              'line-cap': 'round'
+            },
+            'paint': {
+              'line-color': '#363636',
+              'line-width': 6
+            }
+          });
+
+        // Layer toggle logic
+        const layerButtons = document.querySelectorAll('.layer-toggle');
+
+        layerButtons.forEach(button => {
+          const layerId = button.dataset.layer;
+
+          // Make layer visible by default
+          map.setLayoutProperty(layerId, 'visibility', 'visible');
+          button.classList.add('active'); // visually active
+
+          button.addEventListener('click', () => {
+            const visibility = map.getLayoutProperty(layerId, 'visibility');
+
+            if (visibility === 'visible') {
+              map.setLayoutProperty(layerId, 'visibility', 'none');
+              button.classList.remove('active');
+            } else {
+              map.setLayoutProperty(layerId, 'visibility', 'visible');
+              button.classList.add('active');
+            }
+          });
+        });
+      });
+
+    </script>
+  </body>
+</html>
