@@ -10,7 +10,7 @@ var config = {
             alignment: 'left',
             hidden: false,
             icon: 'assets/AW_Logo.png',
-            title: 'Welcome to the Adapting Waterfronts San Francisco Tour!',
+            title: 'Welcome to the Adapting Waterfronts SF Immersive Tour!',
             description: "Dive into an immersive tour through San Francisco’s historic downtown that explores how the city’s waterfront has evolved, and how design and imagination can help us re-envision its future. Please enter fullscreen and scroll slowly for the best experience.",
             caption: "Created by Gabriel Tenaya Kaprielian, Web Design by Abigail Chen",
             location: {
