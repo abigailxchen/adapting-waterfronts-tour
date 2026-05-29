@@ -293,8 +293,13 @@
         height: 30px;   /* fits within 60px nav bar */
         width: auto;
         display: block;
+        transition: transform 0.25s ease;
+        transform-origin: center;
       }
 
+      #logoImg:hover {
+        transform: scale(1.05);
+      }
 
       #infoBtn {
         position: absolute;
@@ -391,9 +396,9 @@
 
     <!-- Top Navigation Bar -->
     <div id="topNav">
-      <!-- <a href="https://www.adaptingwaterfronts.com/"> -->
+      <a href="../index.html">
         <img src="img/AW_Logo_Words.png" alt="Adapting Waterfronts logo" id="logoImg" />
-      <!-- </a> -->
+      </a>
       <button id="infoBtn"><img src="img/Info_Icon.png" alt="Info"></button>
     </div>
 
